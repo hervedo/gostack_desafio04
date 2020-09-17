@@ -49,9 +49,13 @@ class TransactionsRepository {
   }
 
   public create({ title, value, type }: RequestDTO): Transaction {
-    const balance = this.getBalance();
+    const { total } = this.getBalance();
 
-    if (type === 'outcome' && balance.total < value) {
+    if (!['income', 'outcome'].includes(type)) {
+      throw Error('Type is invalid');
+    }
+
+    if (type === 'outcome' && total < value) {
       throw Error('Insufficient funds');
     }
 
